@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const fs = require("fs/promises");
+const { User } = require("./user");
 
 const app = express();
 const port = 3000;
@@ -16,14 +18,24 @@ app.use("/", express.static(path.join(__dirname, "../client")));
 app.get("/", async (req, res) => {
   res.sendFile(path.join(__dirname, "./client/pages/user.html"));
 });
-const { User } = require("./user");
+
 app.get("/users", async (req, res) => {
   const data = await fetch("https://dummyjson.com/users"); // array of user
   const { users } = await data.json();
   const newData = users.map((user) => {
     const newUser = new User(user.id, user.firstName, user.lastName);
+
+    fs.writeFile(
+      `usersData/${user.id}.json`,
+      JSON.stringify(newUser),
+      (err) => {
+        if (err) throw err;
+        console.log('The "data to append" was appended to file!');
+      }
+    );
     return newUser.displayInfo();
   });
+
   return res.json({ success: true, newData });
 });
 
