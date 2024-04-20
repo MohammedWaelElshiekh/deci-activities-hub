@@ -16,13 +16,15 @@ app.use("/", express.static(path.join(__dirname, "../client")));
 app.get("/", async (req, res) => {
   res.sendFile(path.join(__dirname, "./client/pages/user.html"));
 });
-const User = require("./user");
+const { User } = require("./user");
 app.get("/users", async (req, res) => {
   const data = await fetch("https://dummyjson.com/users"); // array of user
-  data.forEach((user) => {
+  const { users } = await data.json();
+  const newData = users.map((user) => {
     const newUser = new User(user.id, user.firstName, user.lastName);
-    newUser.displayInfo();
+    return newUser.displayInfo();
   });
+  return res.json({ success: true, newData });
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

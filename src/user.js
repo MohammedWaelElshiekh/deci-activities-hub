@@ -5,8 +5,8 @@ class User {
     this.lastName = lastName;
   }
   displayInfo() {
-    console.log(`first name: ${this.firstName}, last name: ${this.lastName}`);
+    return `first name: ${this.firstName}, last name: ${this.lastName}`;
   }
 }
 
-module.export = { User };
+module.exports = { User };
